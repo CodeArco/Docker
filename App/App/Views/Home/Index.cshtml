@@ -1,0 +1,17 @@
+﻿@model IEnumerable<Employee>;
+
+<div>
+    <input type="button" value="Create" onclick="location.href='@Url.Action("Create", "Home")'" />
+
+    <h1>Employees list:</h1>
+    <ul>
+        @foreach (var Employee in Model)
+        {
+            <li>
+                Id: @Employee.Id <br />
+                Name: @Employee.Name <br />
+                <input type="button" value="Delete" onclick="location.href='@Url.Action("Delete", "Home",new{Id=Employee.Id})'" />
+            </li>
+        }
+    </ul>
+</div>
