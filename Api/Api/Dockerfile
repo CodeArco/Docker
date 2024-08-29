@@ -17,6 +17,9 @@ RUN dotnet publish "Api.csproj" --no-restore -c Release -o /home/my-app-user/app
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS runtime
 
+RUN apk add icu-libs icu-data-full
+RUN apk add curl
+
 RUN addgroup my-app-group \
 && adduser my-app-user --disabled-password --gecos "" --ingroup my-app-group
 USER my-app-user

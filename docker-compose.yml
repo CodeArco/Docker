@@ -1,0 +1,59 @@
+services:
+    app:
+        build: ./App/App
+        ports:
+            - 8080:8080
+        environment:
+            - Api=http://api:8080/
+            - ASPNETCORE_ENVIRONMENT=Production
+        networks:
+            - network-1
+        depends_on:
+            api:
+                condition: service_healthy
+    api:
+        build: ./Api/Api
+        # ports:
+        #     - 50000:8080
+        environment:
+            - ConnectionStrings__DefaultConnection=Server=db;Database=Employees;Trusted_Connection=false;User Id=sa;Password=myStrongP@ssword;TrustServerCertificate=true;
+            - ASPNETCORE_ENVIRONMENT=Production
+        networks:
+            - network-1
+            - network-2
+        depends_on:
+            db:
+                condition: service_healthy        
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://api:8080/healthcheck"]
+            interval: 10s
+            retries: 10
+            start_period: 10s
+            timeout: 3s    
+    db:
+        environment:
+          ACCEPT_EULA: "Y"
+          SA_PASSWORD: myStrongP@ssword
+        image: mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04
+        #ports:
+        #     - 1433:1433
+        volumes:
+            - db-volume:/var/opt/mssql/data/
+        user: "root"
+        networks:
+            - network-2
+        healthcheck:
+            test: ["CMD-SHELL", 
+            "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P myStrongP@ssword -C -b
+            -Q \"SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'\""]
+            interval: 10s
+            retries: 10
+            start_period: 10s
+            timeout: 3s    
+volumes:
+    db-volume:
+networks:
+  network-1:
+    driver: bridge
+  network-2:
+    driver: bridge

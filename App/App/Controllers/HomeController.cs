@@ -19,7 +19,8 @@ namespace App.Controllers
             // AppSettings read
             var builder = new ConfigurationBuilder()
                             .SetBasePath(Directory.GetCurrentDirectory())
-                            .AddJsonFile("appsettings.json", optional: false);
+                            .AddJsonFile("appsettings.json", optional: false)
+                            .AddEnvironmentVariables();
             IConfiguration config = builder.Build();
             var apiUrl = config.GetValue<string>("Api");
 

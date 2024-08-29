@@ -24,4 +24,5 @@ USER my-app-user
 COPY --chown=my-app-user --from=sdk /home/my-app-user/app/publish /home/my-app-user/app/publish
 
 WORKDIR /home/my-app-user/app/publish
+EXPOSE 8080
 CMD ["dotnet","App.dll"]
